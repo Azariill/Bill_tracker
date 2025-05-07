@@ -6,7 +6,7 @@ from ui.widgets import create_entry_label_frame, create_button, show_error, show
 from datetime import date
 from tkcalendar import DateEntry  # Import DateEntry from tkcalendar
 
-class BillTrackerApp:
+class BillPage:
     def __init__(self, root):
         self.root = root
         self.root.title("Bill Tracker")

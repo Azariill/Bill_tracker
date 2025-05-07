@@ -22,7 +22,7 @@ class BillsPage(ctk.CTkFrame):
 
         # Section Label
         add_bill_label = ctk.CTkLabel(
-            self, text="Add New Bill", font=ctk.CTkFont(size=16, weight="bold")
+            self, text="Add New Bill", font=ctk.CTkFont(size=10, weight="bold")
         )
         add_bill_label.pack(pady=(10, 5))
 

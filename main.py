@@ -1,64 +1,85 @@
 import customtkinter as ctk
-from tkinter import messagebox
-#from dashboard import DashboardPage
-from ui.bills import BillPage
-#from income import IncomePage
+from ui.bills import BillsPage
+
+# from dashboard import DashboardPage
+# from income import IncomePage
+
 
 class MultiPageApp(ctk.CTk):
     def __init__(self):
-        super().__init__()  # Initialize the CTk root window
-        self.title("Bill Tracker")  # Set the title of the application window
-        self.geometry("1000x700")  # Set the initial size of the window
+        super().__init__()  # Initialize the CTk root window (customtkinter's themed version of Tk)
+        self.title("Bill Tracker")  # Set the window title
+        self.geometry("1000x700")  # Set the size of the window
 
-        # Create the navigation bar on the left side
-        nav_frame = ctk.CTkFrame(self, width=200)  # Sidebar frame for navigation buttons
-        nav_frame.pack(side="left", fill="y")  # Stick to the left and fill vertically
+        # ----- Sidebar Navigation -----
+        nav_frame = ctk.CTkFrame(self, width=200)  # Create a left-side navigation panel
+        nav_frame.pack(side="left", fill="y")  # Pack it to the left and fill vertically
 
-        # Navigation header label
-        ctk.CTkLabel(nav_frame, text="Navigation", font=("Arial", 16, "bold")).pack(pady=20)
+        # Navigation title
+        ctk.CTkLabel(nav_frame, text="Navigation", font=("Arial", 16, "bold")).pack(
+            pady=20
+        )
 
-        # Button to switch to the Dashboard page
-        dashboard_btn = ctk.CTkButton(nav_frame, text="Dashboard", command=self.show_dashboard)
+        # Navigation buttons for switching between pages
+        dashboard_btn = ctk.CTkButton(
+            nav_frame, text="Dashboard", command=self.show_dashboard
+        )
         dashboard_btn.pack(pady=10)
 
-        # Button to switch to the Bills page
         bills_btn = ctk.CTkButton(nav_frame, text="Bills", command=self.show_bills)
         bills_btn.pack(pady=10)
 
-        # Button to switch to the Income page
         income_btn = ctk.CTkButton(nav_frame, text="Income", command=self.show_income)
         income_btn.pack(pady=10)
 
-        # Main container to hold the active page content
-        self.container = ctk.CTkFrame(self)  # This is where different page frames will be placed
-        self.container.pack(side="right", fill="both", expand=True)  # Take remaining space
+        # ----- Main Page Display Area -----
+        self.container = ctk.CTkFrame(
+            self
+        )  # Frame to hold whichever page is currently visible
+        self.container.pack(side="right", fill="both", expand=True)
 
-        # Dictionary to hold instances of the page classes
+        # Dictionary to store the page instances
         self.pages = {}
 
-        # Instantiate and grid each page class (Dashboard, Bills, Income)
-        for Page in BillPage:
-            page_name = Page.__name__  # Get class name as string
-            frame = Page(self.container, self)  # Instantiate the page frame
-            self.pages[page_name] = frame  # Store in dictionary
-            frame.grid(row=0, column=0, sticky="nsew")  # Position it in the container frame
+        # ----- Page Instantiation -----
+        # This dictionary maps page names to their class constructors
+        page_classes = {
+            "BillsPage": BillsPage,
+            # "DashboardPage": DashboardPage,
+            # "IncomePage": IncomePage,
+        }
 
-        # Show the dashboard page first by default
-        self.show_dashboard()
+        for page_name, PageClass in page_classes.items():
+            frame = PageClass(
+                self.container
+            )  # Instantiate each page with the container as the parent
+            self.pages[page_name] = frame  # Store the instance in the dictionary
+            frame.pack(
+                fill="both", expand=True
+            )  # Pack the frame so it fills the container
+            frame.lower()  # Hide it initially by sending it to the back
 
-    # Method to raise the DashboardPage frame
+        # Show the default page (BillsPage for now)
+        self.show_bills()
+
+    # ----- Navigation Functions -----
     def show_dashboard(self):
-        self.pages["DashboardPage"].tkraise()
+        """Bring the Dashboard page to the front."""
+        if "DashboardPage" in self.pages:
+            self.pages["DashboardPage"].lift()
 
-    # Method to raise the BillsPage frame
     def show_bills(self):
-        self.pages["BillsPage"].tkraise()
+        """Bring the Bills page to the front."""
+        if "BillsPage" in self.pages:
+            self.pages["BillsPage"].lift()
 
-    # Method to raise the IncomePage frame
     def show_income(self):
-        self.pages["IncomePage"].tkraise()
+        """Bring the Income page to the front."""
+        if "IncomePage" in self.pages:
+            self.pages["IncomePage"].lift()
 
 
+# ----- Entry Point -----
 if __name__ == "__main__":
     app = MultiPageApp()  # Create an instance of the app
-    app.mainloop()  # Start the Tkinter main event loop
+    app.mainloop()  # Run the app's main event loop
